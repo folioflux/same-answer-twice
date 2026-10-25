@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-02-01T09:00:07Z",
+  "period": "2026-01",
+  "question": "What were total income and expenses in January 2026?",
+  "net": 2376.58,
+  "expenses": 1873.42,
+  "income": 4250,
+  "sourceRows": [2, 5, 7, 9, 12]
+}
