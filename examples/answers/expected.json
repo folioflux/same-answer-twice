@@ -1,0 +1,8 @@
+{
+  "question": "What were total income and expenses in January 2026?",
+  "period": "2026-01",
+  "income": 4250.0,
+  "expenses": 1873.42,
+  "net": 2376.58,
+  "sourceRows": [2, 5, 7, 9, 12]
+}
