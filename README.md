@@ -1,5 +1,8 @@
 # same-answer-twice
 
+[![CI](https://github.com/folioflux/same-answer-twice/actions/workflows/ci.yml/badge.svg)](https://github.com/folioflux/same-answer-twice/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Does your AI agent give the same answer to the same question twice? A small CLI and TypeScript library that runs a question or calculation several times and checks that the answers match, with stable hashes and a clear diff when they do not.
 
 > **Status:** early (v0.1.0). The API may change before 1.0. Not yet published to npm; install from source for now.
@@ -153,20 +156,16 @@ Options shared by the CLI and library: `tolerance`, `relativeTolerance`, `precis
 - It does not call any model or agent for you. Bring your own command or function.
 - Runs are sequential by default. Repeated runs against a paid API cost money; choose `--runs` accordingly.
 
-## About
-
-Built by the FolioFlux team. FolioFlux is the AI finance workspace for freelancers, small teams and their accountants: https://folioflux.com
-
-Questions: hello@folioflux.com. Security reports: see [SECURITY.md](SECURITY.md).
-
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Please report security problems privately, as described in [SECURITY.md](SECURITY.md).
 
-## Disclaimer
-
-Not financial, tax, accounting or legal advice.
-
-## Licence
+## License
 
 Released under the [MIT License](LICENSE).
+
+## About
+
+Made by [FolioFlux](https://folioflux.com). Questions: [hello@folioflux.com](mailto:hello@folioflux.com). Security reports: [security@folioflux.com](mailto:security@folioflux.com).
+
+Not financial, tax or legal advice.
