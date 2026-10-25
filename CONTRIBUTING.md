@@ -45,6 +45,6 @@ Useful scripts:
 
 Pull requests are squash-merged once CI passes and a maintainer has reviewed them.
 
-## Licence
+## License
 
 By contributing, you agree that your contributions are licensed under the [MIT License](LICENSE).
