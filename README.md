@@ -89,6 +89,15 @@ same-answer-twice compare --ignore-path '$.generatedAt' --expected examples/answ
   examples/answers/run-1.json examples/answers/run-2.json
 ```
 
+**Distinguish counted zero from an unknown count.** In this workshop inventory example, no one counted the supplies on one shift, so the known answer is `{"available":null}`. On another shift, someone counted an empty shelf, so the known answer is `{"available":0}`. The two saved runs both report zero. From a built checkout:
+
+```sh
+node dist/cli.js compare --format json --expected examples/inventory/expected-unobserved.json \
+  examples/inventory/run-1.json examples/inventory/run-2.json
+```
+
+The command exits `1`: `consistent` is `true`, but `expected.allMatch` is `false`, with a type difference at `$.available` for both runs. Try `expected-counted-zero.json` instead: both verdicts are `true` and the exit is `0`. Remove `--expected` and its filename and the exit is also `0`, but that only proves the answers match. All three cases run in `pnpm run examples`. The CLI does not infer what zero or null means; the fixture supplies that rule.
+
 **Compare free-text answers by their numbers** (`--mode numbers`), or as normalized text (`--mode text`):
 
 ```sh
