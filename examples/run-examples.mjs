@@ -1,9 +1,34 @@
-// Runs every example and checks its exit code. Used in CI after `pnpm build`.
+// Runs every example and checks its exit code and selected JSON verdicts. Used in CI after `pnpm build`.
+import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const cli = ['dist/cli.js'];
+const inventoryRuns = ['examples/inventory/run-1.json', 'examples/inventory/run-2.json'];
+
+function checkInventoryReport(stdout, allMatch) {
+  const report = JSON.parse(stdout);
+  assert.equal(report.consistent, true);
+  assert.deepEqual(report.errors, []);
+  if (allMatch === undefined) {
+    assert.equal(Object.hasOwn(report, 'expected'), false);
+    return;
+  }
+  assert.equal(report.expected.allMatch, allMatch);
+  assert.deepEqual(
+    report.expected.comparisons.map(({ run, equal, differences }) => ({
+      run,
+      equal,
+      diffs: differences.map(({ kind, path }) => [kind, path]),
+    })),
+    [1, 2].map((run) => ({
+      run,
+      equal: allMatch,
+      diffs: allMatch ? [] : [['type', '$.available']],
+    })),
+  );
+}
 
 const cases = [
   {
@@ -77,13 +102,55 @@ const cases = [
     args: [...cli, 'run', '--runs', '3', '--', process.execPath, 'examples/agents/flaky-agent.mjs'],
     exit: 1,
   },
+  {
+    name: 'identical inventory answers pass without a reference',
+    args: [...cli, 'compare', '--format', 'json', ...inventoryRuns],
+    exit: 0,
+    check: (stdout) => checkInventoryReport(stdout),
+  },
+  {
+    name: 'repeated zero fails when inventory was not counted',
+    args: [
+      ...cli,
+      'compare',
+      '--format',
+      'json',
+      '--expected',
+      'examples/inventory/expected-unobserved.json',
+      ...inventoryRuns,
+    ],
+    exit: 1,
+    check: (stdout) => checkInventoryReport(stdout, false),
+  },
+  {
+    name: 'repeated zero passes when inventory was counted',
+    args: [
+      ...cli,
+      'compare',
+      '--format',
+      'json',
+      '--expected',
+      'examples/inventory/expected-counted-zero.json',
+      ...inventoryRuns,
+    ],
+    exit: 0,
+    check: (stdout) => checkInventoryReport(stdout, true),
+  },
   { name: 'the library example', args: ['examples/library.mjs'], exit: 0 },
 ];
 
 let failed = 0;
 for (const example of cases) {
   const result = spawnSync(process.execPath, example.args, { cwd: root, encoding: 'utf8' });
-  const ok = result.status === example.exit;
+  let ok = result.status === example.exit;
+  if (ok && example.check) {
+    try {
+      example.check(result.stdout);
+    } catch (error) {
+      console.error(error);
+      ok = false;
+    }
+  }
   if (!ok) failed += 1;
   console.log(
     `${ok ? 'ok  ' : 'FAIL'} ${example.name} (exit ${String(result.status)}, expected ${example.exit})`,
